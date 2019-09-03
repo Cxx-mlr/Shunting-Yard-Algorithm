@@ -14,13 +14,13 @@
 #include <cstdlib>
 #include <cmath>
 
-#define SHUNTYARD_BEGIN namespace shuntYard {
+#define SHUNTYARD_BEGIN namespace ShuntYard {
 #define SHUNTYARD_END }
 
 SHUNTYARD_BEGIN
 
 enum token_t {
-	EXP    = '^', MULT   = '*', DIV    = '/', PLUS   = '+', MINUS  = '-',
+	EXP = '^', MULT = '*', DIV = '/', PLUS = '+', MINUS = '-',
 	P_OPEN = '(', P_CLOSE = ')',
 
 	NUMBER = 0, BEGIN = 1, END = 2, UNKNOW = 3
@@ -31,7 +31,7 @@ enum precedence_t {
 };
 
 std::string number = {};
-std::string expr   = {};
+std::string expr = {};
 
 std::size_t len;
 int index;
@@ -55,13 +55,13 @@ inline token_t get_token()
 	if (index >= len) return END;
 
 	switch (expr[index++]) {
-		case '('  : return P_OPEN  ;
-		case ')'  : return P_CLOSE ;
-		case '^'  : return EXP     ;
-		case '*'  : return MULT    ;
-		case '/'  : return DIV     ;
-		case '+'  : return PLUS    ;
-		case '-'  : return MINUS   ;
+	case '(': return P_OPEN;
+	case ')': return P_CLOSE;
+	case '^': return EXP;
+	case '*': return MULT;
+	case '/': return DIV;
+	case '+': return PLUS;
+	case '-': return MINUS;
 	}
 
 	index -= 1;
@@ -84,18 +84,18 @@ inline token_t get_token()
 const char* to_str(const token_t token)
 {
 	switch (token) {
-		case P_OPEN   : return "("       ;
-		case P_CLOSE  : return ")"       ;
-		case EXP      : return "EXP"     ;
-		case MULT     : return "MULT"    ;
-		case DIV      : return "DIV"     ;
-		case PLUS     : return "PLUS"    ;
-		case MINUS    : return "MINUS"   ;
+	case P_OPEN: return "(";
+	case P_CLOSE: return ")";
+	case EXP: return "EXP";
+	case MULT: return "MULT";
+	case DIV: return "DIV";
+	case PLUS: return "PLUS";
+	case MINUS: return "MINUS";
 
-		case NUMBER   : return "NUMBER"  ;
-		case UNKNOW   : return "UNKNOW"  ;
-		case BEGIN    : return "BEGIN"   ;
-		case END      : return "END"     ;
+	case NUMBER: return "NUMBER";
+	case UNKNOW: return "UNKNOW";
+	case BEGIN: return "BEGIN";
+	case END: return "END";
 	}
 
 	return "?(token_t)";
@@ -103,20 +103,20 @@ const char* to_str(const token_t token)
 
 const char* to_str(precedence_t precedence) {
 	switch (precedence) {
-	case N        : return "N"       ;
-	case GREATER  : return "GREATER" ;
-	case EQUAL    : return "EQUAL"   ;
-	case LESS     : return "LESS"    ;
+	case N: return "N";
+	case GREATER: return "GREATER";
+	case EQUAL: return "EQUAL";
+	case LESS: return "LESS";
 	}
 
 	return "?(precedence_t)";
 }
 
 void ostream(std::string expr) {
-	int index = std::exchange(::shuntYard::index, 0);
+	int index = std::exchange(::ShuntYard::index, 0);
 
 	len = expr.length();
-	::shuntYard::expr = std::move(std::exchange(expr, {}));
+	::ShuntYard::expr = std::move(std::exchange(expr, {}));
 
 	token_t token = { BEGIN };
 
@@ -130,18 +130,18 @@ void ostream(std::string expr) {
 		}
 	}
 
-	::shuntYard::index = index;
+	::ShuntYard::index = index;
 }
 
 std::string to_str_expr(const token_t token) {
 	switch (token) {
-		case P_OPEN   : return "(" ;
-		case P_CLOSE  : return ")" ;
-		case EXP      : return "^" ;
-		case MULT     : return "*" ;
-		case DIV      : return "/" ;
-		case PLUS     : return "+" ;
-		case MINUS    : return "-" ;
+	case P_OPEN: return "(";
+	case P_CLOSE: return ")";
+	case EXP: return "^";
+	case MULT: return "*";
+	case DIV: return "/";
+	case PLUS: return "+";
+	case MINUS: return "-";
 	}
 
 	return "";
@@ -161,7 +161,7 @@ inline bool match(const token_t lhd, token_t const(&rhd)[N]) {
 }
 
 inline bool E_arithm(const token_t token) {
-	return match(token, {EXP, MULT, DIV, PLUS, MINUS});
+	return match(token, { EXP, MULT, DIV, PLUS, MINUS });
 }
 
 inline bool E_number(const char c) { return is_digit(c); }
@@ -172,49 +172,49 @@ precedence_t get_precedence(token_t lhd, token_t rhd)
 
 	switch (lhd)
 	{
-		case EXP    :
-			switch (rhd)
-			{
-			case EXP    :
-				precedence = EQUAL;
+	case EXP:
+		switch (rhd)
+		{
+		case EXP:
+			precedence = EQUAL;
 			break;
 
-			case MULT: case DIV: case PLUS: case MINUS:
-				precedence = GREATER;
+		case MULT: case DIV: case PLUS: case MINUS:
+			precedence = GREATER;
 			break;
-			}
+		}
 		break;
 
-		case MULT   :
-		case DIV    :
-			switch (rhd)
-			{
-			case EXP:
-				precedence = LESS;
-				break;
+	case MULT:
+	case DIV:
+		switch (rhd)
+		{
+		case EXP:
+			precedence = LESS;
+			break;
 
-			case MULT: case DIV:
-				precedence = EQUAL;
-				break;
+		case MULT: case DIV:
+			precedence = EQUAL;
+			break;
 
-			case PLUS: case MINUS:
-				precedence = GREATER;
-				break;
-			}
+		case PLUS: case MINUS:
+			precedence = GREATER;
+			break;
+		}
 		break;
 
-		case PLUS   :
-		case MINUS  :
-			switch (rhd)
-			{
-			case EXP: case MULT: case DIV:
-				precedence = LESS;
-				break;
+	case PLUS:
+	case MINUS:
+		switch (rhd)
+		{
+		case EXP: case MULT: case DIV:
+			precedence = LESS;
+			break;
 
-			case PLUS: case MINUS:
-				precedence = EQUAL;
-				break;
-			}
+		case PLUS: case MINUS:
+			precedence = EQUAL;
+			break;
+		}
 		break;
 	}
 
@@ -229,14 +229,14 @@ precedence_t get_precedence(token_t lhd, token_t rhd)
 
 #define Case case
 
-void compute(std::string &&expr)
+void compute(std::string&& expr)
 {
 	index = 0;
 	len = expr.length();
 
 	if (!len) { return; }
 
-	::shuntYard::expr = std::move(std::exchange(expr, {}));
+	::ShuntYard::expr = std::move(std::exchange(expr, {}));
 
 	token_t token = { get_token() };
 
@@ -247,75 +247,75 @@ void compute(std::string &&expr)
 	{
 		switch (token)
 		{
-			case NUMBER   : operands.emplace_back(std::move(number));
+		case NUMBER: operands.emplace_back(std::move(number));
 			break;
 
-			case P_OPEN   : operators.emplace(std::move(to_str_expr(token)));
+		case P_OPEN: operators.emplace(std::move(to_str_expr(token)));
 			break;
 
-			case P_CLOSE  :
-				while (!operators.empty() && operators.top() != "(") {
-					operands.emplace_back(std::move(operators.top()));
-					operators.pop();
-				}
+		case P_CLOSE:
+			while (!operators.empty() && operators.top() != "(") {
+				operands.emplace_back(std::move(operators.top()));
+				operators.pop();
+			}
 
-				if (operators.empty()) {
-					std::cerr << "\tsyntax error: missing '('\n";
-					exit(EXIT_FAILURE);
-				}
+			if (operators.empty()) {
+				std::cerr << "\tsyntax error: missing '('\n";
+				exit(EXIT_FAILURE);
+			}
 
-				else
-					operators.pop();
+			else
+				operators.pop();
 			break;
 
-			default:
-				if (E_arithm(token) && (operators.empty() || operators.top() == "(")) {
-					operators.emplace(std::move(to_str_expr(token)));
-				}
+		default:
+			if (E_arithm(token) && (operators.empty() || operators.top() == "(")) {
+				operators.emplace(std::move(to_str_expr(token)));
+			}
 
-				else
+			else
 
 				BEGIN_ELSE
-				precedence_t precedence = get_precedence(token, (token_t) operators.top()[0]);
+				precedence_t precedence = get_precedence(token, (token_t)operators.top()[0]);
 
 
-				switch (token)
+			switch (token)
 
 				BEGIN_SWITCH
-					case EXP:
-						if (precedence == EQUAL || precedence == GREATER) {
-							operators.emplace(std::move(to_str_expr(token)));
+		case EXP:
+			if (precedence == EQUAL || precedence == GREATER) {
+				operators.emplace(std::move(to_str_expr(token)));
+			}
+
+			else {
+				operands.emplace_back(std::move(to_str_expr(token)));
+			}
+			break;
+
+		case MULT: case DIV: case PLUS: case MINUS:
+			if (precedence == GREATER) {
+				operators.emplace(std::move(to_str_expr(token)));
+			}
+
+			else
+
+				if (precedence == EQUAL || precedence == LESS)
+				{
+					do {
+						if (!operators.empty()) {
+							operands.emplace_back(std::move(operators.top()));
+
+							precedence = get_precedence(token, (token_t)operators.top()[0]);
+							operators.pop();
 						}
+					}
 
-						else {
-							operands.emplace_back(std::move(to_str_expr(token)));
-						}
-					break;
+					while ((precedence == EQUAL) || (precedence == LESS));
 
-					case MULT: case DIV: case PLUS: case MINUS:
-						if (precedence == GREATER) {
-							operators.emplace(std::move(to_str_expr(token)));
-						}
-
-						else
-
-						if (precedence == EQUAL || precedence == LESS)
-						{
-							do {
-								if (!operators.empty()) {
-									operands.emplace_back(std::move(operators.top()));
-
-									precedence = get_precedence(token, (token_t)operators.top()[0]);
-									operators.pop();
-								}
-							}
-
-							while ((precedence == EQUAL) || (precedence == LESS));
-
-							operators.emplace(std::move(to_str_expr(token)));
-						}
-					break;
-				END_SWITCH
+					operators.emplace(std::move(to_str_expr(token)));
+				}
+			break;
+			END_SWITCH
 
 				END_ELSE
 		}
@@ -344,16 +344,16 @@ void compute(std::string &&expr)
 			float N2 = VAL.top(); VAL.pop();
 
 			switch (element[0]) {
-				case '+': VAL.push(N2 + N1); break;
-				case '-': VAL.push(N2 - N1); break;
-				case '*': VAL.push(N2 * N1); break;
-				case '/': VAL.push(N2 / N1); break;
+			case '+': VAL.push(N2 + N1); break;
+			case '-': VAL.push(N2 - N1); break;
+			case '*': VAL.push(N2 * N1); break;
+			case '/': VAL.push(N2 / N1); break;
 
-				case '^':
-					VAL.push(std::pow(N2, N1));
-											 break;
+			case '^':
+				VAL.push(std::pow(N2, N1));
+				break;
 
-				default : std::cout << "\tsyntax error: token'" << element[0] << "'\n";
+			default: std::cout << "\tsyntax error: token'" << element[0] << "'\n";
 			}
 		}
 	}
