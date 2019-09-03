@@ -14,10 +14,10 @@
 #include <cstdlib>
 #include <cmath>
 
-#define CXX_BEGIN namespace cxx {
-#define CXX_END }
+#define SHUNTYARD_BEGIN namespace shuntYard {
+#define SHUNTYARD_END }
 
-CXX_BEGIN
+SHUNTYARD_BEGIN
 
 enum token_t {
 	EXP    = '^', MULT   = '*', DIV    = '/', PLUS   = '+', MINUS  = '-',
@@ -113,10 +113,10 @@ const char* to_str(precedence_t precedence) {
 }
 
 void ostream(std::string expr) {
-	int index = std::exchange(::cxx::index, 0);
+	int index = std::exchange(::shuntYard::index, 0);
 
 	len = expr.length();
-	::cxx::expr = std::move(std::exchange(expr, {}));
+	::shuntYard::expr = std::move(std::exchange(expr, {}));
 
 	token_t token = { BEGIN };
 
@@ -130,7 +130,7 @@ void ostream(std::string expr) {
 		}
 	}
 
-	::cxx::index = index;
+	::shuntYard::index = index;
 }
 
 std::string to_str_expr(const token_t token) {
@@ -236,7 +236,7 @@ void compute(std::string &&expr)
 
 	if (!len) { return; }
 
-	::cxx::expr = std::move(std::exchange(expr, {}));
+	::shuntYard::expr = std::move(std::exchange(expr, {}));
 
 	token_t token = { get_token() };
 
@@ -361,6 +361,6 @@ void compute(std::string &&expr)
 	std::cout << ": " << VAL.top() << "\n\n";
 }
 
-CXX_END
+SHUNTYARD_END
 
 #endif
